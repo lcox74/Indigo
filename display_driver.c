@@ -5,10 +5,10 @@ uint8_t *frame_buffer;
 uint32_t image_buffer_addr;
 
 uint16_t
-IT8951_reg_rd(uint16_t cmd, uint16_t data) {
+IT8951_reg_vcom_rd(uint16_t cmd, uint16_t data) {
     IT8951_write_cmd(cmd);
     IT8951_write_data(data);
-    return LCDReadData();
+    return IT8951_read_data();
 }
 
 void
@@ -21,7 +21,7 @@ IT8951_reg_vcom_wr(uint16_t cmd, uint16_t data0, uint16_t data1) {
 /* Driver Registers */
 uint16_t
 IT8951_get_register(uint16_t addr) {
-    return IT8951_reg_rd(IT8951_HIC_REG_RD, addr);
+    return IT8951_reg_vcom_rd(IT8951_HIC_REG_RD, addr);
 }
 void
 IT8951_set_register(uint16_t addr, uint16_t data) {
@@ -31,7 +31,7 @@ IT8951_set_register(uint16_t addr, uint16_t data) {
 /* VCOM get/set */
 uint16_t
 IT8951_get_vcom(void) {
-    return IT8951_reg_rd(DEF_CMD_VCOM, 0x01);
+    return IT8951_reg_vcom_rd(DEF_CMD_VCOM, 0x01);
 }
 void
 IT8951_set_vcom(uint16_t vcom) {
@@ -119,7 +119,6 @@ IT8951_read_partial_data(uint16_t *buf, uint32_t size) {
     for (uint32_t i = 0; i < size; i++) IT8951_read_to_data_bus(&buf[i]);
 
     bcm2835_gpio_write(CS,HIGH);
-    return buf;
 }
 
 void
@@ -298,7 +297,7 @@ IT8951_get_system_info(struct IT8951_sys_info *buf) {
 }
 void
 IT8951_wait_display_ready(void) {
-    while(IT8951ReadReg(SYS_REG_LUT));
+    while(IT8951_reg_rd(SYS_REG_LUT));
 }
 void
 IT8951_clear_display(uint8_t colour) {
