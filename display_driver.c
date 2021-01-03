@@ -80,13 +80,13 @@ IT8951_write_cmd(uint16_t cmd) {
 
     bcm2835_gpio_write(CS,LOW);
         
-    bcm2835_spi_transfer(IT8951_SPI_CD>>8);
-    bcm2835_spi_transfer(IT8951_SPI_CD);
+    bcm2835_spi_transfer(((uint8_t)IT8951_SPI_CD) >> 8);
+    bcm2835_spi_transfer((uint8_t)IT8951_SPI_CD);
         
     IT8951_wait_ready();	
         
-    bcm2835_spi_transfer(cmd>>8);
-    bcm2835_spi_transfer(cmd);
+    bcm2835_spi_transfer(((uint8_t)cmd) >> 8);
+    bcm2835_spi_transfer((uint8_t)cmd);
         
     bcm2835_gpio_write(CS,HIGH); 
 }
@@ -95,18 +95,18 @@ void
 IT8951_write_data(uint16_t data) {
     // IT8951_wait_ready();
     // IT8951_write_wr_func(IT8951_SPI_WR, data);
-    
+
     IT8951_wait_ready();	
-    
+
     bcm2835_gpio_write(CS,LOW);
         
-    bcm2835_spi_transfer(IT8951_SPI_WR>>8);
-    bcm2835_spi_transfer(IT8951_SPI_WR);
+    bcm2835_spi_transfer(((uint8_t)IT8951_SPI_WR) >> 8);
+    bcm2835_spi_transfer((uint8_t)IT8951_SPI_WR);
         
     IT8951_wait_ready();	
         
-    bcm2835_spi_transfer(data>>8);
-    bcm2835_spi_transfer(data);
+    bcm2835_spi_transfer(((uint8_t)data) >> 8);
+    bcm2835_spi_transfer((uint8_t)data);
         
     bcm2835_gpio_write(CS,HIGH); 
 }
@@ -331,6 +331,17 @@ IT8951_get_system_info(struct IT8951_sys_info *buf) {
 
     IT8951_write_cmd(DEF_CMD_GET_INFO);
     IT8951_read_partial_data(data, sizeof(struct IT8951_sys_info) / 2);
+
+    //Show Device information of IT8951
+    struct IT8951_sys_info* pstDevInfo;
+	pstDevInfo = (struct IT8951_sys_info*)buf;
+	printf("Panel(W,H) = (%d,%d)\r\n",
+	pstDevInfo->pw, pstDevInfo->ph );
+	printf("Image Buffer Address = %X\r\n",
+	pstDevInfo->ib_addr_l | (pstDevInfo->ib_addr_h << 16));
+	//Show Firmware and LUT Version
+	printf("FW Version = %s\r\n", (uint8_t*)pstDevInfo->fw);
+	printf("LUT Version = %s\r\n", (uint8_t*)pstDevInfo->lut);
 }
 void
 IT8951_wait_display_ready(void) {
