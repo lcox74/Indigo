@@ -79,14 +79,16 @@ IT8951_write_cmd(uint16_t cmd) {
     IT8951_wait_ready();	
 
     bcm2835_gpio_write(CS,LOW);
+
+    uint16_t wPreamble = IT8951_SPI_CD; 
         
-    bcm2835_spi_transfer(((uint8_t)IT8951_SPI_CD) >> 8);
-    bcm2835_spi_transfer((uint8_t)IT8951_SPI_CD);
+    bcm2835_spi_transfer(wPreamble >> 8);
+    bcm2835_spi_transfer(wPreamble);
         
     IT8951_wait_ready();	
         
-    bcm2835_spi_transfer(((uint8_t)cmd) >> 8);
-    bcm2835_spi_transfer((uint8_t)cmd);
+    bcm2835_spi_transfer(cmd >> 8);
+    bcm2835_spi_transfer(cmd);
         
     bcm2835_gpio_write(CS,HIGH); 
 }
@@ -96,17 +98,18 @@ IT8951_write_data(uint16_t data) {
     // IT8951_wait_ready();
     // IT8951_write_wr_func(IT8951_SPI_WR, data);
 
-    IT8951_wait_ready();	
+    IT8951_wait_ready();
+    uint16_t wPreamble = IT8951_SPI_WR; 
 
     bcm2835_gpio_write(CS,LOW);
         
-    bcm2835_spi_transfer(((uint8_t)IT8951_SPI_WR) >> 8);
-    bcm2835_spi_transfer((uint8_t)IT8951_SPI_WR);
+    bcm2835_spi_transfer(wPreamble >> 8);
+    bcm2835_spi_transfer(wPreamble);
         
     IT8951_wait_ready();	
         
-    bcm2835_spi_transfer(((uint8_t)data) >> 8);
-    bcm2835_spi_transfer((uint8_t)data);
+    bcm2835_spi_transfer(data >> 8);
+    bcm2835_spi_transfer(data);
         
     bcm2835_gpio_write(CS,HIGH); 
 }
