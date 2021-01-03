@@ -1,6 +1,6 @@
-SRCS=IT8951.c miniGUI.c main.c AsciiLib.c bmp.c
+SRCS=display_driver.c main.c
 CC=gcc
-OUT=IT8951
+OUT=smartframe
 
 $(OUT):$(SRCS)
 	$(CC) -Wall $(SRCS) -o $(OUT) -lbcm2835

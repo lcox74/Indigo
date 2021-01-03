@@ -306,9 +306,9 @@ IT8951_clear_display(uint8_t colour) {
     IT8951_update_display();
 }
 void
-IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour);
+IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour) {}
 void
-IT8951_draw_text(uint16_t x, uint16_t y, uint8_t c, uint8_t fg, uint8_t bg);
+IT8951_draw_text(uint16_t x, uint16_t y, uint8_t c, uint8_t fg, uint8_t bg) {}
 void
 IT8951_update_display(void) {
     IT8951_update_partial_display(0, 0, sys_info.pw, sys_info.ph);
