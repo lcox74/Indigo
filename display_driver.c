@@ -293,7 +293,7 @@ IT8951_get_system_info(struct IT8951_sys_info *buf) {
     uint16_t *data = (uint16_t *) buf;
 
     IT8951_write_cmd(DEF_CMD_GET_INFO);
-    IT8951_read_data(data, sizeof(struct IT8951_sys_info) / 2);
+    IT8951_read_partial_data(data, sizeof(struct IT8951_sys_info) / 2);
 }
 void
 IT8951_wait_display_ready(void) {
