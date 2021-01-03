@@ -213,6 +213,15 @@ IT8951_ld_img_end(void) {
 }
 
 void
+IT8951_set_ib_base_addr(uint32_t addr) {
+    IT8951_reg_wr(SYS_REG_LISAR + 2, 
+        (uint16_t)((image_buffer_addr >> 16) & 0x0000FFFF));
+        
+    IT8951_reg_wr(SYS_REG_LISAR, 
+        (uint16_t)(image_buffer_addr & 0x0000FFFF));
+}
+
+void
 IT8951_pixel_buffer_wr(struct IT8951_img_info *info, 
                        struct IT8951_partial_img_info *rect) {
     uint16_t *fbuf = (uint16_t *)info->fb_addr;

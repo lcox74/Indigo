@@ -88,9 +88,11 @@ void     IT8951_update_partial_display(uint16_t, uint16_t, uint16_t, uint16_t);
 
 /* System Registers */
 #define SYS_REG_BASE               0x0000
-#define SYS_REG_DISPLAY            0x1000 
+#define SYS_REG_DISPLAY            0x1000
+#define SYS_REG_MCSR               0x0200
 #define SYS_REG_ADDR (SYS_REG_BASE + 0x04)    /* Address of System Registers */
 #define SYS_REG_LUT (SYS_REG_DISPLAY + 0x224) /* Address LUT Status Register */
+#define SYS_REG_LISAR (SYS_REG_MCSR + 0x0008)
 
 /* Host Interface Command Functions */
 void     IT8951_sys_run(void);
