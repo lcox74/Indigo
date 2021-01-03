@@ -46,7 +46,7 @@ void     IT8951_read_partial_data(uint16_t *, uint32_t);
 void     IT8951_write_arg(uint16_t, uint16_t *, uint16_t);
 
 /* System Info */
-struct IT8951_sys_info
+typedef struct 
 {
     uint16_t pw;        /* Panel Width */
     uint16_t ph;        /* Panel Height */
@@ -54,12 +54,12 @@ struct IT8951_sys_info
     uint16_t ib_addr_h; /* Image Buffer Address High */
     uint16_t fw[8]; 	/* Firmware Version */
     uint16_t lut[8]; 	/* LUT Version */
-};
+} IT8951_sys_info;
 
 /* System API */
 uint8_t  IT8951_init(void);
 void     IT8951_destroy(void);
-void     IT8951_get_system_info(struct IT8951_sys_info *);
+void     IT8951_get_system_info(void *);
 void     IT8951_wait_display_ready(void);
 void     IT8951_clear_display(uint8_t);
 void     IT8951_draw_pixel(uint16_t, uint16_t, uint8_t);

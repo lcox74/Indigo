@@ -1,6 +1,6 @@
 #include "display_driver.h"
 
-struct IT8951_sys_info sys_info;
+IT8951_sys_info sys_info;
 uint8_t *frame_buffer;
 uint32_t image_buffer_addr;
 
@@ -326,15 +326,15 @@ IT8951_destroy(void) {
     bcm2835_close();
 }
 void
-IT8951_get_system_info(struct IT8951_sys_info *buf) {
+IT8951_get_system_info(void *buf) {
     uint16_t *data = (uint16_t *) buf;
 
     IT8951_write_cmd(DEF_CMD_GET_INFO);
-    IT8951_read_partial_data(data, sizeof(struct IT8951_sys_info) / 2);
+    IT8951_read_partial_data(data, sizeof(IT8951_sys_info) / 2);
 
     //Show Device information of IT8951
-    struct IT8951_sys_info* pstDevInfo;
-	pstDevInfo = (struct IT8951_sys_info*)buf;
+    IT8951_sys_info* pstDevInfo;
+	pstDevInfo = (IT8951_sys_info*)buf;
 	printf("Panel(W,H) = (%d,%d)\r\n",
 	pstDevInfo->pw, pstDevInfo->ph );
 	printf("Image Buffer Address = %X\r\n",
