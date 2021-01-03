@@ -83,7 +83,7 @@ void     IT8951_update_partial_display(uint16_t, uint16_t, uint16_t, uint16_t);
 
 /* User Defined Commands */
 #define DEF_CMD_VCOM               0x0039
-#define DEF_CMD_GET_INFO           0x0039
+#define DEF_CMD_GET_INFO           0x0302
 #define DEF_CMD_DPY_AREA           0x0034
 
 /* System Registers */

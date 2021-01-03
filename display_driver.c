@@ -73,14 +73,42 @@ IT8951_write_wr_func(uint16_t type, uint16_t data) {
 
 void
 IT8951_write_cmd(uint16_t cmd) {
-    IT8951_wait_ready();
-    IT8951_write_wr_func(IT8951_SPI_CD, cmd);
+    // IT8951_wait_ready();
+    // IT8951_write_wr_func(IT8951_SPI_CD, cmd);
+
+    IT8951_wait_ready();	
+
+    bcm2835_gpio_write(CS,LOW);
+        
+    bcm2835_spi_transfer(IT8951_SPI_CD>>8);
+    bcm2835_spi_transfer(IT8951_SPI_CD);
+        
+    IT8951_wait_ready();	
+        
+    bcm2835_spi_transfer(cmd>>8);
+    bcm2835_spi_transfer(cmd);
+        
+    bcm2835_gpio_write(CS,HIGH); 
 }
 
 void
 IT8951_write_data(uint16_t data) {
-    IT8951_wait_ready();
-    IT8951_write_wr_func(IT8951_SPI_WR, data);
+    // IT8951_wait_ready();
+    // IT8951_write_wr_func(IT8951_SPI_WR, data);
+    
+    IT8951_wait_ready();	
+    
+    bcm2835_gpio_write(CS,LOW);
+        
+    bcm2835_spi_transfer(IT8951_SPI_WR>>8);
+    bcm2835_spi_transfer(IT8951_SPI_WR);
+        
+    IT8951_wait_ready();	
+        
+    bcm2835_spi_transfer(data>>8);
+    bcm2835_spi_transfer(data);
+        
+    bcm2835_gpio_write(CS,HIGH); 
 }
 
 uint16_t
@@ -216,7 +244,7 @@ void
 IT8951_set_ib_base_addr(uint32_t addr) {
     IT8951_reg_wr(SYS_REG_LISAR + 2, 
         (uint16_t)((image_buffer_addr >> 16) & 0x0000FFFF));
-        
+
     IT8951_reg_wr(SYS_REG_LISAR, 
         (uint16_t)(image_buffer_addr & 0x0000FFFF));
 }
