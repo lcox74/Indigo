@@ -4,6 +4,17 @@ IT8951_sys_info sys_info;
 uint8_t *frame_buffer;
 uint32_t image_buffer_addr;
 
+void
+IT8951_wr16(uint16_t data) {
+    bcm2835_spi_transfer(data >> 8);
+    bcm2835_spi_transfer(data);
+}
+
+uint16_t
+IT8951_rd16() {
+    return (bcm2835_spi_transfer(0x00) << 8) | bcm2835_spi_transfer(0x00);
+}
+
 uint16_t
 IT8951_reg_vcom_rd(uint16_t cmd, uint16_t data) {
     IT8951_write_cmd(cmd);
@@ -48,106 +59,80 @@ IT8951_wait_ready(void) {
 }
 
 void
-IT8951_write_to_data_bus(uint16_t data) {
-    /* Write data to data bus */
+IT8951_write_func(const uint16_t preamble, const uint16_t data) {
+    bcm2835_gpio_write(CS,LOW);
+
     IT8951_wait_ready();
-    bcm2835_spi_transfer(data >> 8);
-    bcm2835_spi_transfer(data);
+    IT8951_wr16(preamble);
+        
+    IT8951_wait_ready();
+    IT8951_wr16(data);
+        
+    bcm2835_gpio_write(CS,HIGH);
 }
 
 void
-IT8951_read_to_data_bus(uint16_t *buf) {
-    /* Read data to data bus */
+IT8951_read_func(const uint16_t preamble) {
     IT8951_wait_ready();
-    (*buf) = bcm2835_spi_transfer(0x00) << 8;
-    (*buf) |= bcm2835_spi_transfer(0x00);
-}
-
-void
-IT8951_write_wr_func(uint16_t type, uint16_t data) {
-    bcm2835_gpio_write(CS, LOW);
-    IT8951_write_to_data_bus(type);
-    IT8951_write_to_data_bus(data);
-    bcm2835_gpio_write(CS, HIGH);
+    IT8951_wr16(preamble);
+        
+    IT8951_wait_ready();
+    IT8951_rd16(); /* Dummy Read */
 }
 
 void
 IT8951_write_cmd(uint16_t cmd) {
-    // IT8951_wait_ready();
-    // IT8951_write_wr_func(IT8951_SPI_CD, cmd);
-
-    IT8951_wait_ready();	
-
-    bcm2835_gpio_write(CS,LOW);
-
-    uint16_t wPreamble = IT8951_SPI_CD; 
-        
-    bcm2835_spi_transfer(wPreamble >> 8);
-    bcm2835_spi_transfer(wPreamble);
-        
-    IT8951_wait_ready();	
-        
-    bcm2835_spi_transfer(cmd >> 8);
-    bcm2835_spi_transfer(cmd);
-        
-    bcm2835_gpio_write(CS,HIGH); 
+    const uint16_t preamble = IT8951_SPI_CD;
+    IT8951_write_func(preamble, cmd);
 }
 
 void
 IT8951_write_data(uint16_t data) {
-    // IT8951_wait_ready();
-    // IT8951_write_wr_func(IT8951_SPI_WR, data);
-
-    IT8951_wait_ready();
-    uint16_t wPreamble = IT8951_SPI_WR; 
-
-    bcm2835_gpio_write(CS,LOW);
-        
-    bcm2835_spi_transfer(wPreamble >> 8);
-    bcm2835_spi_transfer(wPreamble);
-        
-    IT8951_wait_ready();	
-        
-    bcm2835_spi_transfer(data >> 8);
-    bcm2835_spi_transfer(data);
-        
-    bcm2835_gpio_write(CS,HIGH); 
-}
-
-uint16_t
-IT8951_read_data(void) {
-    uint16_t buf;
-
-    IT8951_wait_ready();
-    bcm2835_gpio_write(CS,LOW);
-
-    IT8951_write_to_data_bus(IT8951_SPI_RD);
-    IT8951_read_to_data_bus(&buf); /* Dummy Read */
-    IT8951_read_to_data_bus(&buf);
-
-    bcm2835_gpio_write(CS,HIGH);
-    return buf;
+    const uint16_t preamble = IT8951_SPI_WR;
+    IT8951_write_func(preamble, data);
 }
 
 void
 IT8951_write_partial_data(uint16_t *buf, uint32_t size) {
-    IT8951_wait_ready();
+    const uint16_t preamble = IT8951_SPI_WR;
+
     bcm2835_gpio_write(CS, LOW);
 
-    IT8951_write_to_data_bus(IT8951_SPI_WR);
-    for (uint32_t i = 0; i < size; i++) IT8951_write_to_data_bus(buf[i]);
+    IT8951_wait_ready();
+    IT8951_wr16(preamble);
+
+    IT8951_wait_ready();
+    for (uint32_t i = 0; i < size; i++) IT8951_wr16(buf[i]);
 
     bcm2835_gpio_write(CS, HIGH);
 }
 
+uint16_t
+IT8951_read_data(void) {
+    const uint16_t preamble = IT8951_SPI_RD;
+    uint16_t data;
+
+    bcm2835_gpio_write(CS,LOW);
+    IT8951_read_func(preamble);
+
+    IT8951_wait_ready();
+    data = IT8951_rd16();
+
+    bcm2835_gpio_write(CS,HIGH);
+
+    return data;
+}
+
 void
 IT8951_read_partial_data(uint16_t *buf, uint32_t size) {
-    IT8951_wait_ready();
+    const uint16_t preamble = IT8951_SPI_RD;
+    uint16_t data;
+
     bcm2835_gpio_write(CS,LOW);
-    
-    IT8951_write_to_data_bus(IT8951_SPI_RD);
-    IT8951_read_to_data_bus(&buf[0]); /* Dummy Read */
-    for (uint32_t i = 0; i < size; i++) IT8951_read_to_data_bus(&buf[i]);
+    IT8951_read_func(preamble);
+
+    IT8951_wait_ready();
+    for (uint32_t i = 0; i < size; i++) buf[i] = IT8951_rd16();
 
     bcm2835_gpio_write(CS,HIGH);
 }
