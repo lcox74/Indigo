@@ -42,7 +42,7 @@ IT8951_set_register(uint16_t addr, uint16_t data) {
 /* VCOM get/set */
 uint16_t
 IT8951_get_vcom(void) {
-    return IT8951_reg_vcom_rd(DEF_CMD_VCOM, 0x01);
+    return IT8951_reg_vcom_rd(DEF_CMD_VCOM, 0x00);
 }
 void
 IT8951_set_vcom(uint16_t vcom) {
