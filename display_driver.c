@@ -213,11 +213,11 @@ void
 IT8951_ld_img_partial_start(struct IT8951_img_info *info, 
                             struct IT8951_partial_img_info *rect) {
     uint16_t arg[5] = {
-        (uint16_t) (info->et << 8) | (info->bpp << 4) | (info->rot),
-        (uint16_t) rect->x,
-        (uint16_t) rect->y,
-        (uint16_t) rect->w,
-        (uint16_t) rect->h
+        (info->et << 8) | (info->bpp << 4) | (info->rot),
+        (rect->x),
+        (rect->y),
+        (rect->w),
+        (rect->h)
     };
 
     IT8951_write_arg(IT8951_HIC_LD_IMG_AREA, arg, 5);
@@ -229,11 +229,11 @@ IT8951_ld_img_end(void) {
 
 void
 IT8951_set_ib_base_addr(uint32_t addr) {
-    IT8951_reg_wr(SYS_REG_LISAR + 2, 
-        (uint16_t)((image_buffer_addr >> 16) & 0x0000FFFF));
+    uint16_t addrH = (uint16_t)((image_buffer_addr >> 16) & 0x0000FFFF);
+    uint16_t addrL = (uint16_t)( image_buffer_addr & 0x0000FFFF);
 
-    IT8951_reg_wr(SYS_REG_LISAR, 
-        (uint16_t)(image_buffer_addr & 0x0000FFFF));
+    IT8951_reg_wr(SYS_REG_LISAR + 2, addrH);
+    IT8951_reg_wr(SYS_REG_LISAR    , addrL);
 }
 
 void
@@ -245,7 +245,7 @@ IT8951_pixel_buffer_wr(struct IT8951_img_info *info,
     IT8951_ld_img_partial_start(info, rect);
 
     for (uint32_t j = 0; j < rect->h; j++) {
-        for (uint32_t i = 0; i < rect->w; i++) {
+        for (uint32_t i = 0; i < rect->w / 2; i++) {
             IT8951_write_data(*fbuf);
             fbuf++;
         }
