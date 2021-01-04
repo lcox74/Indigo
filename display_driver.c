@@ -340,7 +340,32 @@ IT8951_clear_display(uint8_t colour) {
     IT8951_update_display();
 }
 void
-IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour) {}
+IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour) {
+    uint16_t width = sys_info.pw;
+	uint16_t high = sys_info.ph/16;
+	
+	//--------------------------------------------------------------------------------------------
+	//      Regular display - Display Any Gray colors with Mode 2 or others
+	//--------------------------------------------------------------------------------------------
+	//Preparing buffer to All black (8 bpp image)
+	//or you can create your image pattern here..
+	memset(frame_buffer                   ,  0x00, width * high * 1);
+	memset(frame_buffer + width * high * 1,  0x11, width * high * 1);
+	memset(frame_buffer + width * high * 2,  0x22, width * high * 1);
+	memset(frame_buffer + width * high * 3,  0x33, width * high * 1);
+	memset(frame_buffer + width * high * 4,  0x44, width * high * 1);
+	memset(frame_buffer + width * high * 5,  0x55, width * high * 1);
+	memset(frame_buffer + width * high * 6,  0x66, width * high * 1);
+	memset(frame_buffer + width * high * 7,  0x77, width * high * 1);
+	memset(frame_buffer + width * high * 8,  0x88, width * high * 1);
+	memset(frame_buffer + width * high * 9,  0x99, width * high * 1);
+	memset(frame_buffer + width * high * 10, 0xaa, width * high * 1);
+	memset(frame_buffer + width * high * 11, 0xbb, width * high * 1);
+	memset(frame_buffer + width * high * 12, 0xcc, width * high * 1);
+	memset(frame_buffer + width * high * 13, 0xdd, width * high * 1);
+	memset(frame_buffer + width * high * 14, 0xee, width * high * 1);
+	memset(frame_buffer + width * high * 15, 0xff, sys_info.pw * sys_info.ph - width * high * 15);
+}
 void
 IT8951_draw_text(uint16_t x, uint16_t y, uint8_t c, uint8_t fg, uint8_t bg) {}
 void
