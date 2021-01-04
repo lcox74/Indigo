@@ -126,7 +126,6 @@ IT8951_read_data(void) {
 void
 IT8951_read_partial_data(uint16_t *buf, uint32_t size) {
     const uint16_t preamble = IT8951_SPI_RD;
-    uint16_t data;
 
     bcm2835_gpio_write(CS,LOW);
     IT8951_read_func(preamble);
