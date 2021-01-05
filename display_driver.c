@@ -318,17 +318,6 @@ IT8951_get_system_info(void *buf) {
 
     IT8951_write_cmd(DEF_CMD_GET_INFO);
     IT8951_read_partial_data(data, sizeof(IT8951_sys_info) / 2);
-
-    //Show Device information of IT8951
-    IT8951_sys_info* pstDevInfo;
-	pstDevInfo = (IT8951_sys_info*)buf;
-	printf("Panel(W,H) = (%d,%d)\r\n",
-	pstDevInfo->pw, pstDevInfo->ph );
-	printf("Image Buffer Address = %X\r\n",
-	pstDevInfo->ib_addr_l | (pstDevInfo->ib_addr_h << 16));
-	//Show Firmware and LUT Version
-	printf("FW Version = %s\r\n", (uint8_t*)pstDevInfo->fw);
-	printf("LUT Version = %s\r\n", (uint8_t*)pstDevInfo->lut);
 }
 void
 IT8951_wait_display_ready(void) {
