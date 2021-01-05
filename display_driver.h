@@ -14,22 +14,6 @@
 #define RST 	            0x0011 /* External reset (LOW active)     */
 #define VCOM	            0x09C4 /* VCOM Voltage val 2500 = -2.50V  */
 
-/* Endian Type Value */
-#define ENDIAN_LITTLE       0x0000
-#define ENDIAN_BIG          0x0001
-
-/* Pixel Mode Value (Bits Per Pixel) */
-#define PM_2BPP             0x0000
-#define PM_3BPP             0x0001
-#define PM_4BPP             0x0002
-#define PM_8BPP             0x0003
-
-/* Image Rotation */
-#define ROT_0               0x0000
-#define ROT_90              0x0001
-#define ROT_180             0x0002
-#define ROT_270             0x0003
-
 /* SPI Preamble Words */
 #define IT8951_SPI_CD       0x6000 /* Command */
 #define IT8951_SPI_WR       0x0000 /* Write Data */
@@ -45,10 +29,10 @@
 void     IT8951_wait_ready(void);
 void     IT8951_write_cmd(uint16_t);
 void     IT8951_write_data(uint16_t);
-uint16_t IT8951_read_data(void);
-void     IT8951_write_partial_data(uint16_t *, uint32_t);
-void     IT8951_read_partial_data(uint16_t *, uint32_t);
+void     IT8951_write_data_n(uint16_t *, uint32_t);
 void     IT8951_write_arg(uint16_t, uint16_t *, uint16_t);
+uint16_t IT8951_read_data(void);
+void     IT8951_read_data_n(uint16_t *, uint32_t);
 
 /* System Info */
 typedef struct 
@@ -70,7 +54,6 @@ void     IT8951_clear_display(uint8_t);
 void     IT8951_draw_pixel(uint16_t, uint16_t, uint8_t);
 void     IT8951_draw_text(uint16_t, uint16_t, uint8_t, uint8_t, uint8_t);
 void     IT8951_update_display(void);
-void     IT8951_update_partial_display(uint16_t, uint16_t, uint16_t, uint16_t);
 
 /* Host Interface Command Codes */
 #define IT8951_HIC_SYS_RUN         0x0001 /* System running CMD */
@@ -90,6 +73,7 @@ void     IT8951_update_partial_display(uint16_t, uint16_t, uint16_t, uint16_t);
 #define DEF_CMD_VCOM               0x0039
 #define DEF_CMD_GET_INFO           0x0302
 #define DEF_CMD_DPY_AREA           0x0034
+#define DEF_VAL_SCR_REFR           0x0002
 
 /* System Registers */
 #define SYS_REG_BASE               0x0000
@@ -119,16 +103,10 @@ struct IT8951_img_info {
     uint32_t ib_addr;   /* Image Buffer Address */
 };
 
-struct IT8951_partial_img_info {
-    uint16_t x, y, w, h;
-};
-
 void     IT8951_ld_img_start(struct IT8951_img_info *);
-void     IT8951_ld_img_partial_start(struct IT8951_img_info *, 
-                             struct IT8951_partial_img_info *);
 void     IT8951_ld_img_end(void);
 
-void IT8951_set_ib_base_addr(uint32_t ib_addr);
+void IT8951_set_ib_base_addr(uint32_t);
 
 /* Driver Registers */
 uint16_t IT8951_get_register(uint16_t);

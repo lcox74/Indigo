@@ -29,16 +29,6 @@ IT8951_reg_vcom_wr(uint16_t cmd, uint16_t data0, uint16_t data1) {
     IT8951_write_data(data1);
 }
 
-/* Driver Registers */
-uint16_t
-IT8951_get_register(uint16_t addr) {
-    return IT8951_reg_vcom_rd(IT8951_HIC_REG_RD, addr);
-}
-void
-IT8951_set_register(uint16_t addr, uint16_t data) {
-    IT8951_reg_vcom_wr(IT8951_HIC_REG_WR, addr, data);
-}
-
 /* VCOM get/set */
 uint16_t
 IT8951_get_vcom(void) {
@@ -93,7 +83,7 @@ IT8951_write_data(uint16_t data) {
 }
 
 void
-IT8951_write_partial_data(uint16_t *buf, uint32_t size) {
+IT8951_write_data_n(uint16_t *buf, uint32_t size) {
     const uint16_t preamble = IT8951_SPI_WR;
 
     bcm2835_gpio_write(CS, LOW);
@@ -124,7 +114,7 @@ IT8951_read_data(void) {
 }
 
 void
-IT8951_read_partial_data(uint16_t *buf, uint32_t size) {
+IT8951_read_data_n(uint16_t *buf, uint32_t size) {
     const uint16_t preamble = IT8951_SPI_RD;
 
     bcm2835_gpio_write(CS,LOW);
@@ -210,19 +200,6 @@ IT8951_ld_img_start(struct IT8951_img_info *info) {
     IT8951_write_data(U16_EBR(info->et, info->bpp, info->rot));
 }
 void
-IT8951_ld_img_partial_start(struct IT8951_img_info *info, 
-                            struct IT8951_partial_img_info *rect) {
-    uint16_t arg[5] = {
-        (U16_EBR(info->et, info->bpp, info->rot)),
-        (rect->x),
-        (rect->y),
-        (rect->w),
-        (rect->h)
-    };
-
-    IT8951_write_arg(IT8951_HIC_LD_IMG_AREA, arg, 5);
-}
-void
 IT8951_ld_img_end(void) {
     IT8951_write_cmd(IT8951_HIC_LD_IMG_END);
 }
@@ -234,15 +211,14 @@ IT8951_set_ib_base_addr(uint32_t addr) {
 }
 
 void
-IT8951_pixel_buffer_wr(struct IT8951_img_info *info, 
-                       struct IT8951_partial_img_info *rect) {
+IT8951_pixel_buffer_wr(struct IT8951_img_info *info) {
     uint16_t *fbuf = (uint16_t *)info->fb_addr;
 
     IT8951_set_ib_base_addr(info->ib_addr);
-    IT8951_ld_img_partial_start(info, rect);
+    IT8951_ld_img_start(info);
 
-    for (uint32_t j = 0; j < rect->h; j++) {
-        for (uint32_t i = 0; i < rect->w / 2; i++) {
+    for (uint32_t j = 0; j < sys_info.ph; j++) {
+        for (uint32_t i = 0; i < sys_info.pw / 2; i++) {
             IT8951_write_data(*fbuf);
             fbuf++;
         }
@@ -252,14 +228,13 @@ IT8951_pixel_buffer_wr(struct IT8951_img_info *info,
 }
 
 void
-IT8951_display_buffer(uint16_t x, uint16_t y, uint16_t w, uint16_t h, 
-                      uint16_t display_mode) {
+IT8951_display_buffer() {
     IT8951_write_cmd(DEF_CMD_DPY_AREA);
-    IT8951_write_data(x);
-    IT8951_write_data(y);
-    IT8951_write_data(w);
-    IT8951_write_data(h);
-    IT8951_write_data(display_mode);
+    IT8951_write_data(0x00);            /* x0 (top-left) */
+    IT8951_write_data(0x00);            /* y0 (top-left) */
+    IT8951_write_data(sys_info.pw);     /* x1 (bottom-right) */
+    IT8951_write_data(sys_info.ph);     /* y1 (bottom-right) */
+    IT8951_write_data(DEF_VAL_SCR_REFR);
 }
 
 /* 
@@ -295,7 +270,7 @@ IT8951_init(void) {
 
     if (!(frame_buffer = malloc(sys_info.pw * sys_info.ph))) return 2;
 
-    image_buffer_addr = sys_info.ib_addr_l | (sys_info.ib_addr_h << 16);
+    image_buffer_addr = U16_U32(sys_info.ib_addr_l, sys_info.ib_addr_h);
 
     IT8951_reg_wr(SYS_REG_ADDR, 0x0001);
     if (VCOM != IT8951_get_vcom()) IT8951_set_vcom(VCOM);
@@ -332,59 +307,27 @@ IT8951_clear_display(uint8_t colour) {
 }
 void
 IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour) {
-    uint16_t width = sys_info.pw;
-	uint16_t high = sys_info.ph/16;
-	
-	//--------------------------------------------------------------------------------------------
-	//      Regular display - Display Any Gray colors with Mode 2 or others
-	//--------------------------------------------------------------------------------------------
-	//Preparing buffer to All black (8 bpp image)
-	//or you can create your image pattern here..
-	memset(frame_buffer                   ,  0x00, width * high * 1);
-	memset(frame_buffer + width * high * 1,  0x11, width * high * 1);
-	memset(frame_buffer + width * high * 2,  0x22, width * high * 1);
-	memset(frame_buffer + width * high * 3,  0x33, width * high * 1);
-	memset(frame_buffer + width * high * 4,  0x44, width * high * 1);
-	memset(frame_buffer + width * high * 5,  0x55, width * high * 1);
-	memset(frame_buffer + width * high * 6,  0x66, width * high * 1);
-	memset(frame_buffer + width * high * 7,  0x77, width * high * 1);
-	memset(frame_buffer + width * high * 8,  0x88, width * high * 1);
-	memset(frame_buffer + width * high * 9,  0x99, width * high * 1);
-	memset(frame_buffer + width * high * 10, 0xaa, width * high * 1);
-	memset(frame_buffer + width * high * 11, 0xbb, width * high * 1);
-	memset(frame_buffer + width * high * 12, 0xcc, width * high * 1);
-	memset(frame_buffer + width * high * 13, 0xdd, width * high * 1);
-	memset(frame_buffer + width * high * 14, 0xee, width * high * 1);
-	memset(frame_buffer + width * high * 15, 0xff, sys_info.pw * sys_info.ph - width * high * 15);
+    const uint16_t colours[0x10] = {
+        0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+        0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff
+    };
+    colour = (colour >= 0x10) ? colour >> 0xf : colour;
+    x %= sys_info.pw;
+    y %= sys_info.ph;
+
+    frame_buffer[y * sys_info.pw + x] = colours[colour];
 }
 void
 IT8951_draw_text(uint16_t x, uint16_t y, uint8_t c, uint8_t fg, uint8_t bg) {}
 void
 IT8951_update_display(void) {
-    IT8951_update_partial_display(0, 0, sys_info.pw, sys_info.ph);
-}
-void
-IT8951_update_partial_display(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
     struct IT8951_img_info info;
-    struct IT8951_partial_img_info rect;
     info.fb_addr = (uint32_t) frame_buffer;
-    info.et      = ENDIAN_LITTLE;
-    info.bpp     = PM_8BPP;
-    info.rot     = ROT_0;
+    info.et      = 0x0000;                     /* Little Endian */
+    info.bpp     = 0x0003;                     /* 8 Bits Per Pixel */
+    info.rot     = 0x0000;                     /* 0 Deg Rotation */
     info.ib_addr = image_buffer_addr;
-    rect.x       = x;
-    rect.y       = y;
-    rect.w       = w;
-    rect.h       = h;
 
-    const int t = h * w;
-    printf("%x %x %x %x ... %x %x %x %x\n", frame_buffer[0], frame_buffer[1], 
-                                            frame_buffer[2], frame_buffer[3],
-                                            frame_buffer[t - 4], 
-                                            frame_buffer[t - 3], 
-                                            frame_buffer[t - 2], 
-                                            frame_buffer[t - 1]);
-
-    //IT8951_pixel_buffer_wr(&info, &rect);
-    IT8951_display_buffer(0, 0, sys_info.pw, sys_info.ph, 0);
+    IT8951_pixel_buffer_wr(&info);
+    IT8951_display_buffer();
 }
