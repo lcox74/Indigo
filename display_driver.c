@@ -375,6 +375,14 @@ IT8951_update_partial_display(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
     rect.w       = w;
     rect.h       = h;
 
+    const int t = h * w;
+    printf("%x %x %x %x ... %x %x %x %x\n", frame_buffer[0], frame_buffer[1], 
+                                            frame_buffer[2], frame_buffer[3],
+                                            frame_buffer[t - 4], 
+                                            frame_buffer[t - 3], 
+                                            frame_buffer[t - 2], 
+                                            frame_buffer[t - 1]);
+
     IT8951_pixel_buffer_wr(&info, &rect);
     IT8951_display_buffer(0, 0, sys_info.pw, sys_info.ph, 0);
 }
