@@ -146,10 +146,10 @@ IT8951_write_arg(uint16_t cmd, uint16_t *args, uint16_t size) {
 void IT8951_mem_bst_rd_wr(uint16_t cmd, uint32_t addr, uint32_t size) {
     /* Set Arguments */
     uint16_t args[4] = {
-        (uint16_t)  (addr & 0x0000FFFF),            /* Addr[15:0] */
-        (uint16_t) ((addr >> 16) & 0x0000FFFF ),    /* Addr[25:16] */
-        (uint16_t)  (size & 0x0000FFFF),            /* Cnt[15:0] */
-        (uint16_t) ((size >> 16) & 0x0000FFFF )     /* Cnt[25:16] */
+        U32_L(addr),                           /* Addr[15:0] */
+        U32_H(addr),                           /* Addr[25:16] */
+        U32_L(size),                           /* Cnt[15:0] */
+        U32_H(size)                            /* Cnt[25:16] */
     };
     
     /* Write to Host Controller */
@@ -207,13 +207,13 @@ IT8951_mem_bst_end(void) {
 void
 IT8951_ld_img_start(struct IT8951_img_info *info) {
     IT8951_write_cmd(IT8951_HIC_LD_IMG);
-    IT8951_write_data((info->et << 8) | (info->bpp << 4) | (info->rot));
+    IT8951_write_data(U16_EBR(info->et, info->bpp, info->rot));
 }
 void
 IT8951_ld_img_partial_start(struct IT8951_img_info *info, 
                             struct IT8951_partial_img_info *rect) {
     uint16_t arg[5] = {
-        (info->et << 8) | (info->bpp << 4) | (info->rot),
+        (U16_EBR(info->et, info->bpp, info->rot)),
         (rect->x),
         (rect->y),
         (rect->w),
@@ -229,11 +229,8 @@ IT8951_ld_img_end(void) {
 
 void
 IT8951_set_ib_base_addr(uint32_t addr) {
-    uint16_t addrH = (uint16_t)((image_buffer_addr >> 16) & 0x0000FFFF);
-    uint16_t addrL = (uint16_t)( image_buffer_addr & 0x0000FFFF);
-
-    IT8951_reg_wr(SYS_REG_LISAR + 2, addrH);
-    IT8951_reg_wr(SYS_REG_LISAR    , addrL);
+    IT8951_reg_wr(SYS_REG_LISAR + 2, U32_H(addr));
+    IT8951_reg_wr(SYS_REG_LISAR    , U32_L(addr));
 }
 
 void

@@ -9,7 +9,6 @@
 /* Requires bcm2835 Library http://www.airspayce.com/mikem/bcm2835 */
 #include <bcm2835.h>
 
-
 #define CS                  0x0008 /* SPI Chip Selection (LOW active) */
 #define HRDY 	            0x0018 /* Busy status output (LOW active) */
 #define RST 	            0x0011 /* External reset (LOW active)     */
@@ -35,6 +34,12 @@
 #define IT8951_SPI_CD       0x6000 /* Command */
 #define IT8951_SPI_WR       0x0000 /* Write Data */
 #define IT8951_SPI_RD       0x1000 /* Read Data */
+
+/* Utility Functions */
+#define U32_H(x)        (uint16_t)((x >> 16) & 0x0000FFFF)
+#define U32_L(x)        (uint16_t)((x >> 0 ) & 0x0000FFFF)
+#define U16_EBR(e,b,r)  (uint16_t)((e << 8) | (b << 4) | (r))
+
 
 /* Host Controller Functions */
 void     IT8951_wait_ready(void);
