@@ -300,6 +300,11 @@ IT8951_init(void) {
     IT8951_reg_wr(SYS_REG_ADDR, 0x0001);
     if (VCOM != IT8951_get_vcom()) IT8951_set_vcom(VCOM);
 
+    printf("Display Size %d x %d\n", sys_info.pw, sys_info.ph);
+    printf("Image Buffer Addr %x\n", U16_U32(sys_info.ib_addr_l, 
+                                             sys_info.ib_addr_h));
+    printf("VCOM Value %d\n", IT8951_get_vcom());
+
     return 0;
 }
 void
@@ -380,6 +385,6 @@ IT8951_update_partial_display(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
                                             frame_buffer[t - 2], 
                                             frame_buffer[t - 1]);
 
-    IT8951_pixel_buffer_wr(&info, &rect);
+    //IT8951_pixel_buffer_wr(&info, &rect);
     IT8951_display_buffer(0, 0, sys_info.pw, sys_info.ph, 0);
 }

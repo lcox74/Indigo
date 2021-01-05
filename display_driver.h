@@ -39,7 +39,7 @@
 #define U32_H(x)        (uint16_t)((x >> 16) & 0x0000FFFF)
 #define U32_L(x)        (uint16_t)((x >> 0 ) & 0x0000FFFF)
 #define U16_EBR(e,b,r)  (uint16_t)((e << 8) | (b << 4) | (r))
-
+#define U16_U32(l,h)    (uint32_t) (l | (h << 16))
 
 /* Host Controller Functions */
 void     IT8951_wait_ready(void);

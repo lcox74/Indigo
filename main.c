@@ -1,14 +1,12 @@
 #include "display_driver.h"
 
 int main(int argc, char *argv[]) {
-    printf("Initialising Display...");
+    printf("Initialising Display");
     uint16_t err;
     if ((err = IT8951_init())) {
-        printf("\t[FAILED]\n");
-        printf("Error: %d", err);
+        printf("Initialisation Error: %d", err);
         return err;
     }
-    printf("\t[DONE]\n");
     
     printf("Clearing Display\n");
     IT8951_wait_display_ready();
