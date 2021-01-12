@@ -44,7 +44,6 @@ int main(int argc, char *argv[]) {
 
     IT8951_wait_display_ready();
     IT8951_update_display();
-    bcm2835_delay(1000);
 
     IT8951_destroy();
     return 0;
