@@ -389,11 +389,13 @@ IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour) {
         0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
         0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff
     };
-    colour = (colour >= 0x10) ? colour >> 0xf : colour;
     x %= sys_info.pw;
     y %= sys_info.ph;
 
-    frame_buffer[y * sys_info.pw + x] = colours[colour];
+    if (colour >= 0x10)
+	frame_buffer[y * sys_info.pw + x] = colour;
+    else
+	frame_buffer[y * sys_info.pw + x] = colours[colour];
 }
 void
 IT8951_update_display(void) {

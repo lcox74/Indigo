@@ -21,4 +21,4 @@ typedef struct {
     const uint8_t           start;  /* The offset for char codes */
 } font_t;
 
-#endif /* _BITMAP_FONTS_H_ */`
+#endif /* _BITMAP_FONTS_H_ */
