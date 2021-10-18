@@ -201,6 +201,9 @@ int main (int argc, char *argv[]) {
 	
 	// Write the decompressed bitmap out to a ppm file, just to make sure 
 	// it worked. 
+
+    for (i = 0; i < bmp_size; i++) printf("0x%02x\n", bmp_buffer[i]);
+
 	fd = open("output.ppm", O_CREAT | O_WRONLY, 0666);
 	char buf[1024];
 
