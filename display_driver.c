@@ -440,8 +440,7 @@ IT8951_draw_glyph(uint8_t glyph, uint16_t x, uint16_t y, uint8_t font) {
     uint16_t w, h, iy, ix;
     for ((iy = g.o_y, h = 0); iy < g.o_y + g.o_h; (iy++, h++)) {     
         for ((ix = g.o_x, w = 0); ix < g.o_x + g.o_w; ix++) {
-            IT8951_draw_pixel(x + w++, y + h, 255 - f.d[iy * f.w + ix]);
-            //printf("0x%02x\n", f.d[iy * f.w + ix]);
+            IT8951_draw_pixel(x + w++, y + h, f.d[iy * f.w + ix]);
         }
     }
 
@@ -487,7 +486,7 @@ IT8951_update_display(void) {
 /* Modifying teh sample code from https://gist.github.com/PhirePhly/3080633 */
 void
 IT8951_draw_jpeg(uint16_t x, uint16_t y, const char *file) {
-    int rc, i, j;
+    int rc, i;
     struct stat file_info;
     unsigned long jpg_size;
     unsigned char *jpg_buffer;
@@ -606,16 +605,10 @@ IT8951_draw_jpeg(uint16_t x, uint16_t y, const char *file) {
 	free(jpg_buffer);
 
     for (i = 0; i < bmp_size/3; i++) {
-        IT8951_draw_pixel_rgb(x + (i / width), y + (i % width), 
-                              bmp_buffer[i*3], bmp_buffer[(i*3)+1], bmp_buffer[(i*3)+2]);
+        IT8951_draw_pixel_rgb(x + (i % width), y + (i / width), 
+                bmp_buffer[i*3], bmp_buffer[(i*3)+1], bmp_buffer[(i*3)+2]);
     }
 
-/*    for (int px = 0; px < width; ++px) {
-        for (int py = 0; py < height; ++py) {
-            uint16_t pos = (py * pixel_size) * row_stride + (px * pixel_size);
-            IT8951_draw_pixel(x + px, y + py, bmp_buffer[pos]);
-        }
-    }*/
 	free(bmp_buffer);
 
 }
