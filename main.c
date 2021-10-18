@@ -7,7 +7,11 @@ int main(int argc, char *argv[]) {
         printf("Initialisation Error: %d", err);
         return err;
     }
-    
+
+    IT8951_sys_info info;
+    IT8951_get_system_info(&info);
+    printf("Display (w, h) -> (%u, %u)\n", info.pw, info.ph);
+
     printf("Clearing Display\n");
     IT8951_wait_display_ready();
     IT8951_clear_display(0xFF); /* White */

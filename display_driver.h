@@ -33,6 +33,7 @@ void     IT8951_get_system_info(void *);
 void     IT8951_wait_display_ready(void);
 void     IT8951_clear_display(uint8_t);
 void     IT8951_draw_pixel(uint16_t, uint16_t, uint8_t);
+void     IT8951_draw_pixel_rgb(uint16_t, uint16_t, uint8_t, uint8_t, uint8_t);
 uint16_t IT8951_draw_glyph(uint8_t, uint16_t, uint16_t, uint8_t);
 void     IT8951_draw_text(const char *, uint16_t, uint16_t, uint8_t);
 void     IT8951_update_display(void);

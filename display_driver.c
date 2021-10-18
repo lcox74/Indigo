@@ -391,6 +391,16 @@ IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour) {
     frame_buffer[x * sys_info.pw + y] = colour;
 }
 
+void
+IT8951_draw_pixel_rgb(uint16_t x, uint16_t y, uint8_t r, uint8_t g, uint8_t b) {
+    /* Using the liminosity method to convert to greyscale */
+    uint8_t greyscale = (uint8_t)( (0.299f * (float)r) + 
+                                   (0.587f * (float)g) + 
+                                   (0.114f * (float)b) );
+
+    IT8951_draw_pixel(x, y, greyscale);
+}
+
 #define FONT_DEFAULT 0
 #define FONT_ROBOTO  1
 #define FONT_WEATHER 2
