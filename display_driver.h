@@ -18,8 +18,8 @@
 /* System Info */
 typedef struct 
 {
-    uint16_t pw;        /* Panel Width */
-    uint16_t ph;        /* Panel Height */
+    uint16_t pw;        /* Panel Width (rotated to height) */
+    uint16_t ph;        /* Panel Height (rotated to width) */
     uint16_t ib_addr_l; /* Image Buffer Address Low */
     uint16_t ib_addr_h; /* Image Buffer Address High */
     uint16_t fw[8]; 	/* Firmware Version */
@@ -33,6 +33,8 @@ void     IT8951_get_system_info(void *);
 void     IT8951_wait_display_ready(void);
 void     IT8951_clear_display(uint8_t);
 void     IT8951_draw_pixel(uint16_t, uint16_t, uint8_t);
+uint16_t IT8951_draw_glyph(uint8_t, uint16_t, uint16_t, uint8_t);
+void     IT8951_draw_text(const char *, uint16_t, uint16_t, uint8_t);
 void     IT8951_update_display(void);
 
 #endif /* _DRIVER_H_ */

@@ -1,4 +1,5 @@
 #include "display_driver.h"
+#include "res/font.h"
 
 /* SPI Pins */
 #define CS                  0x0008 /* SPI Chip Selection (LOW active) */
@@ -385,11 +386,68 @@ IT8951_clear_display(uint8_t colour) {
 }
 void
 IT8951_draw_pixel(uint16_t x, uint16_t y, uint8_t colour) {
-    x %= sys_info.pw;
-    y %= sys_info.ph;
+    if (x > sys_info.ph || y > sys_info.pw) return;
 
-    frame_buffer[y * sys_info.pw + x] = colour;
+    frame_buffer[x * sys_info.pw + y] = colour;
 }
+
+#define FONT_DEFAULT 0
+#define FONT_ROBOTO  1
+#define FONT_WEATHER 2
+struct glyph_t
+font_selection(uint8_t font, const font_t *f, uint8_t index) {
+    
+    switch (font) {
+        case FONT_DEFAULT:
+        case FONT_ROBOTO:
+            f = &default_font;
+            break;
+        case FONT_WEATHER:
+            f = &weather_font;
+            break;
+    }
+
+    index = (index <= f->start) ? index : index - f->start;
+    if (index >= f->size) return f->glyphs[0];
+    return f->glyphs[index];
+}
+
+uint16_t
+IT8951_draw_glyph(uint8_t glyph, uint16_t x, uint16_t y, uint8_t font) {
+    const font_t f;
+    const struct glyph_t g = font_selection(font, &f, glyph);
+
+    uint16_t w, h, iy, ix;
+    for ((iy = g.o_y, h = 0); iy < g.o_y + g.o_h; (iy++, h++)) {     
+        for ((ix = g.o_x, w = 0); ix < g.o_x + g.o_w; ix++) {
+            IT8951_draw_pixel(x + w++, y + h, f.d[iy * f.w + ix]);
+        }
+    }
+
+    return g.w; /* Returns the width of the glyph */
+}
+void
+IT8951_draw_text(const char *text, uint16_t x, uint16_t y, uint8_t font) {
+    const uint16_t sx = x; /* Starting x position for alignment */
+    
+    while (*text) {
+        switch(*text) {
+            case '\n':
+            case '\r':
+                y += 65; /* Fix this later */
+                x = sx;
+                break;
+            case '\t':
+                for (uint8_t i = 0; i < 4; i++) 
+                    x += IT8951_draw_glyph(*text, x, y, font);
+                break;
+            default:
+                x += IT8951_draw_glyph(*text, x, y, font);
+        }
+        text++;
+    }
+}
+
 void
 IT8951_update_display(void) {
     struct IT8951_img_info info;

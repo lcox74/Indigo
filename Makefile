@@ -3,7 +3,7 @@ CC=gcc
 OUT=smartframe.out
 
 $(OUT):$(SRCS)
-	$(CC) -Wall -g $(SRCS) -o $(OUT) -lbcm2835 -O3
+	$(CC) -Wall -g $(SRCS) -o $(OUT) -lbcm2835
 
 main.o: main.c
 	$(CC) -Wall -g -c main.c
