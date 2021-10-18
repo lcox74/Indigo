@@ -38,4 +38,6 @@ uint16_t IT8951_draw_glyph(uint8_t, uint16_t, uint16_t, uint8_t);
 void     IT8951_draw_text(const char *, uint16_t, uint16_t, uint8_t);
 void     IT8951_update_display(void);
 
+void     IT8951_draw_jpeg(uint16_t, uint16_t, const char *);
+
 #endif /* _DRIVER_H_ */

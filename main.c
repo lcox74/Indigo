@@ -16,17 +16,12 @@ int main(int argc, char *argv[]) {
     IT8951_wait_display_ready();
     IT8951_clear_display(0xFF); /* White */
 
-    printf("Drawing Glyphs\n");
-//    int g = 0;
-//    for (int y = 0; y < 12; y++) {
-//       for (int x = 0; x < 9; x++) {
-//            IT8951_draw_glyph(g++, x * 65 + 10, y * 65 + 10, 0);
-//        }
-//    }
+    printf("Drawing Image\n");
+    IT8951_draw_jpeg(10, 10, "test/image.jpg");
 
-    for (int x = 0; x < 60; x++) {
-        for (int y = 0; y < 60; y++) IT8951_draw_pixel(100 + x, 100 + y, 100);
-    }
+    // for (int x = 0; x < 60; x++) {
+    //     for (int y = 0; y < 60; y++) IT8951_draw_pixel(100 + x, 100 + y, 100);
+    // }
 
     IT8951_wait_display_ready();
     IT8951_update_display();
