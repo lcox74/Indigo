@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     IT8951_clear_display(0xFF); /* White */
 
     printf("Drawing Image\n");
-    IT8951_draw_jpeg(0, 0, "test/image.jpg");
+    IT8951_draw_jpeg(0, 0, "image.jpg");
 
 
     IT8951_wait_display_ready();

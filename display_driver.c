@@ -605,7 +605,7 @@ IT8951_draw_jpeg(uint16_t x, uint16_t y, const char *file) {
 	free(jpg_buffer);
 
     for (i = 0; i < bmp_size/3; i++) {
-        IT8951_draw_pixel_rgb(x + (i % width), y + (i / width), 
+        IT8951_draw_pixel_rgb(width - (x + (i % width)), y + (i / width), 
                 bmp_buffer[i*3], bmp_buffer[(i*3)+1], bmp_buffer[(i*3)+2]);
     }
 
