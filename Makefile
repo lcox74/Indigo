@@ -1,21 +1,16 @@
-SRCS=display_driver.o main.o roboto_regular_font.o weather_glyphs.o
+SRCS=src/display_driver.o src/main.o
 CC=gcc
 OUT=smartframe.out
 
 $(OUT):$(SRCS)
 	$(CC) -Wall -g $(SRCS) -o $(OUT) -lbcm2835 -ljpeg
 
-main.o: main.c
-	$(CC) -Wall -g -c main.c
+src/main.o: src/main.c
+	$(CC) -Wall -g -c src/main.c
 
-display_driver.o: display_driver.c
-	$(CC) -Wall -g -c display_driver.c
+src/display_driver.o: src/display_driver.c
+	$(CC) -Wall -g -c src/display_driver.c
 
-roboto_regular_font.o: res/roboto_regular_font.c
-	$(CC) -Wall -g -c res/roboto_regular_font.c
-
-weather_glyphs.o: res/weather_glyphs.c
-	$(CC) -Wall -g -c res/weather_glyphs.c
 
 clean:
 	rm -f $(OUT)

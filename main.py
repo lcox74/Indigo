@@ -18,6 +18,27 @@ scope                   = "user-library-read user-read-currently-playing"
 open_weather_api_key    = config_data['open_weather']['api_key']
 weather_location_id     = config_data['open_weather']['locations'][0]['id']
 
+# OpenWeather to https://erikflowers.github.io/weather-icons/
+icon_map = {
+    "11d": "wi-day-thunderstorm",
+    "11n": "wi-night-thunderstorm",
+    "09d": "wi-day-showers",
+    "09n": "wi-night-showers",
+    "10d": "wi-day-rain",
+    "10n": "wi-night-rain",
+    "13d": "wi-day-snow",
+    "13n": "wi-night-snow",
+    "50d": "wi-day-haze",
+    "50n": "wi-night-fog",
+    "01d": "wi-day-sunny",
+    "01n": "wi-night-clear",
+    "02d": "wi-day-cloudy",
+    "02n": "wi-night-alt-cloudy",
+    "03d": "wi-day-cloudy",
+    "03n": "wi-night-alt-cloudy",
+    "04d": "wi-day-cloudy",
+    "04n": "wi-night-alt-cloudy",
+}
 
 def get_current_song() -> (str, str, str):
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope, client_id=client_id, client_secret=client_secret, redirect_uri=redirect_uri))
@@ -38,7 +59,12 @@ def get_current_weather_icon(location_id) -> str:
     }
 
     r = requests.get(URL, params=PARAMS)
-    return r.json()['weather'][0]['icon']
+    weather_code = r.json()['weather'][0]['icon']
+
+    if weather_code in icon_map:
+        return icon_map[weather_code]
+    
+    return "wi-cloud"
 
 # Image Values
 print("Fetching song from Spotify")
@@ -46,7 +72,8 @@ song, artist, img = get_current_song()
 current_time = datetime.now().strftime("%H:%M")
 icon = get_current_weather_icon(weather_location_id)
 
-html_code = """<html style="background-color: #FFF;width: 600px; height: 800px;">
+html_code = """
+<html style="background-color: #FFF;width: 600px; height: 800px;">
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
     <div style="position:absolute; top: 100; left: 140">
         <img style="width: 320px; height: 320px; box-shadow: 0px 10px 10px #AAA" src="{}" alt="">
@@ -61,11 +88,12 @@ html_code = """<html style="background-color: #FFF;width: 600px; height: 800px;"
             <p style="margin: 0; ">{}</p>
         </div>
         <div>
-            <img src="http://openweathermap.org/img/wn/{}@2x.png" alt="">
+            <img style="width: 100px; height: 100px" src="https://github.com/erikflowers/weather-icons/blob/master/svg/{}.svg" alt="">
         </div>
     </div>
 </body>
-</html>""".format(img, song, artist, current_time, icon)
+</html>
+""".format(img, song, artist, current_time, icon)
 
 
 print("Constructing ePaper Graphic")
