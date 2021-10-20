@@ -104,12 +104,12 @@ def get_html_showcase(current_time, weather_icon):
 <html style="background-color: #FFF;width: 600px; height: 800px;">
 <body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
     <img src="data:image/jpeg;base64,{}" style="width: 600px; height: 800px; object-fit: cover ">
-    <div style="margin-right: 200px; margin-left: 200px; background-color: #FFF;position: absolute; top: 650px; width: 200px; display: flex; align-items: center; justify-content: center;">
+    <div style="border-radius: 0px 0px 0px 20px; margin-left: 375px; background-color: #FFF;position: absolute; top: 15px; width: 200px; display: flex; align-items: center; justify-content: center;">
         <div style="text-align: center; font-size: 50px; color: #2A2A2A;">
             <p style="margin: 0; ">{}</p>
         </div>
         <div>
-            <img style="width: 64px; height: 64px" src="https://raw.githubusercontent.com/erikflowers/weather-icons/master/svg/{}.svg" alt="">
+            <img style="width: 64px; height: 64px; padding-top: 15px" src="https://raw.githubusercontent.com/erikflowers/weather-icons/master/svg/{}.svg" alt="">
         </div>
     </div>
 </body>
