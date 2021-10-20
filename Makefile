@@ -6,10 +6,10 @@ $(OUT):$(SRCS)
 	$(CC) -Wall -g $(SRCS) -o $(OUT) -lbcm2835 -ljpeg
 
 src/main.o: src/main.c
-	$(CC) -Wall -g -c src/main.c
+	$(CC) -Wall -g -c src/main.c -o src/main.o
 
 src/display_driver.o: src/display_driver.c
-	$(CC) -Wall -g -c src/display_driver.c
+	$(CC) -Wall -g -c src/display_driver.c -o src/display_driver.o
 
 
 clean:

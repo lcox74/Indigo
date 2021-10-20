@@ -88,13 +88,12 @@ html_code = """
             <p style="margin: 0; ">{}</p>
         </div>
         <div>
-            <img style="width: 100px; height: 100px" src="https://github.com/erikflowers/weather-icons/blob/master/svg/{}.svg" alt="">
+            <img style="width: 64px; height: 64px" src="https://raw.githubusercontent.com/erikflowers/weather-icons/master/svg/{}.svg" alt="">
         </div>
     </div>
 </body>
 </html>
 """.format(img, song, artist, current_time, icon)
-
 
 print("Constructing ePaper Graphic")
 hti = Html2Image()
