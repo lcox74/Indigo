@@ -51,3 +51,12 @@ Module.symvers
 Mkfile.old
 dkms.conf
 bcm2835.h
+
+.cache
+config.json
+imgs/*.jpg
+imgs/*.JPG
+imgs/*.png
+imgs/*.PNG
+*.jpg
+*.png
