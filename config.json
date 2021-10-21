@@ -1,0 +1,27 @@
+{
+    "spotify_app": {
+        "client_id": "",
+        "client_secret": "",
+        "scope": "user-read-currently-playing"
+    },
+    "open_weather": {
+        "api_key": "",
+        "locations": [
+            {
+                "id": "2174003",
+                "name": "Brisbane"
+            }
+        ]
+    },
+    "smartframe_app": {
+        "last_refresh": {
+            "weather_icon": "",
+            "weather_temp": "",
+            "image": "",
+            "song": "",
+            "timestamp": 0,
+            "playing": false
+        },
+        "refresh_delay": 600
+    }
+}
